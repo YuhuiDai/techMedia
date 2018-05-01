@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Yuhui Dai">
+    <title>SaladNews</title>
+    <link rel="shortcut icon" type="image/x-icon" href="../static/resource/salad.png">
+    <link href="../static/css/bootstrap.css" rel="stylesheet">
+    <link href="../static/css/portfolioTemplate.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+    <style>
+        .hide {
+            width: 0;
+            height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body id="page-top" class="index">
+
+<nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+    <a class="navbar-brand" href="/home">
+        <img src="../static/resource/salad.png" height ="45px" class="d-inline-block align-top" alt="">
+    </a>
+    <div style="padding-left: 20px; padding-right: 40px; font-size: 24px;">SaladNews</div>
+    <div class="searchBar">
+        <div>
+            <svg class="searchIcon" viewBox="0 0 24 24" aria-hidden="true" aria-label="" role="img">
+                <path d="M10.00,16.00 C6.69,16.00 4.00,13.31 4.00,10.00 C4.00,6.69 6.69,4.00 10.00,4.00 C13.31,4.00 16.00,6.69 16.00,10.00 C16.00,13.31 13.31,16.00 10.00,16.00 M23.12,18.88 L18.86,14.62 C19.59,13.24 20.00,11.67 20.00,10.00 C20.00,4.48 15.52,0.00 10.00,0.00 C4.48,0.00 0.00,4.48 0.00,10.00 C0.00,15.52 4.48,20.00 10.00,20.00 C11.67,20.00 13.24,19.59 14.62,18.86 L18.88,23.12 C20.05,24.29 21.95,24.29 23.12,23.12 C24.29,21.95 24.29,20.05 23.12,18.88" data-reactid="43"></path>
+            </svg>
+        </div>
+        <div style="width:100%;height:100%;">
+            <input type="text" autocomplete="off" aria-autocomplete="false" aria-describedby="searchBoxAccessibleText" class="SearchBoxInput" data-test-id="SearchBoxInput" name="searchbar" placeholder="Search" value="">
+        </div>
+    </div>
+
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Sophistication Score
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#" onClick="showEasyOnly()">Easy</a>
+            <a class="dropdown-item" href="#" onClick="showMediumOnly()">Medium</a>
+            <a class="dropdown-item" href="#" onClick="showDifficultOnly()">Difficult</a>
+            <a class="dropdown-item" href="#" onClick="showAll()">All</a>
+        </div>
+    </div>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+
+</nav>
+
+<section class="jumbotron">
+<div id="columns">
+    {% if data %}
+        {% for d in data %}
+            <div class="card_container {{ d.easiness }}">
+
+                    <div class="card">
+                        <img class="card-img-top" src="{{ d.img }}">
+                        <div style="position: absolute;top: 30px;left: 30px;">
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ d.url }}">
+                                <h5 class="card-title">{{ d.title }}</h5>
+                            </a>
+                            <div class="card-text">
+                                <p style="float: left;margin: 0 10px 10px 0;">{{ d.resource }}</p>
+                                <div>
+                                    <p style="float: right;margin: 0 10px 10px 10px;">{{ d.vote }}</p>
+                                    <svg onclick="changeColorVote(this)" onmouseover="hoverColor(this)" onmouseout="mouseOut(this)" style="fill: #f5d3d3; float: right;width: 30px;" viewBox="0 0 32 29.6" >
+                                        <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/>
+                                    </svg>
+                                </div>
+                                <p class="rating_score" style="margin: 0 20px 10px 0;float: right;">{{ d.score }}</p>
+                                <img src="../static/resource/salad.png" class="rating_image"/>
+                            </div>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ d.snippet }}</li>
+                        </ul>
+                    </div>
+
+            </div>
+        {% endfor %}
+    {% else %}
+        <div>Require search term</div>
+    {%endif %}
+
+
+</div>
+</section>
+
+<footer>
+    <div class="col-md-12 portfolio">
+        <p class="myFooter">© 2018 Disheng Zheng, Zhen Liu & Yuhui Dai</p>
+    </div>
+    <hr style="visibility:hidden">
+
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="../static/js/bootstrap.js"></script>
+<script type="text/javascript">
+
+    $("input").on("keydown",function search(e) {
+        if(e.keyCode == 13) {
+            window.location = '/articles?search='+ ($(this).val());
+        }
+    });
+
+    function hoverColor(caller) {
+        $(caller).css('fill', '#f77878');
+    }
+    function mouseOut(caller) {
+        $(caller).css('fill', '#f5d3d3');
+    }
+    function changeColorVote(caller) {
+        console.log(($.trim($(caller).parent().parent().prev().first().text())).length);
+
+        if (!$(caller).is( ".liked" )) {
+            $(caller).css('fill', '#f77878');
+            $(caller).prev().html(parseInt($(caller).prev().text())+1);
+            $(caller).addClass('liked');
+            var title = $.trim($(caller).parent().parent().prev().first().text());
+            $.ajax({
+                    type : 'PUT',
+                    url : "http://localhost:3000/posts?title="+title,
+                    data: {title: title, 'vote': parseInt($(caller).prev().text()) + 1},
+                    success : function(data){
+                        console.log(data);
+                    }
+                });
+
+
+        } else {
+            $(caller).css('fill', '#f5d3d3');
+            $(caller).prev().html(parseInt($(caller).prev().text())-1);
+            $(caller).removeClass('liked');
+            var title = $.trim($(caller).parent().parent().prev().first().text());
+            $.ajax({
+                    type : 'PUT',
+                    url : "http://localhost:3000/posts?title="+title,
+                    data: {title: title, 'vote': parseInt($(caller).prev().text()) - 1},
+                    success : function(data){
+                        console.log(data);
+                    }
+                });
+
+        }
+
+    };
+
+    var easy = document.getElementsByClassName('easy');
+    var medium = document.getElementsByClassName('medium');
+    var difficult = document.getElementsByClassName('difficult');
+
+    console.log("easy "+easy.length);
+    console.log("medium "+medium.length);
+    console.log("hard "+difficult.length);
+
+    function showAll(){
+        show(easy);
+        show(medium);
+        show(difficult);
+    }
+    function showEasyOnly(){
+        show(easy);
+        hide(medium);
+        hide(difficult);
+    }
+    function showMediumOnly(){
+        show(medium);
+        hide(easy);
+        hide(difficult);
+    }
+    function showDifficultOnly() {
+        show(difficult);
+        hide(easy);
+        hide(medium);
+    }
+    function show(elements){
+        console.log("showing "+elements.length);
+        for(var i = 0; i < elements.length; i ++) {
+            elements[i].classList.remove('hide');
+        };
+    }
+    function hide(elements){
+        console.log("hiding "+elements.length);
+        for(var i = 0; i < elements.length; i ++) {
+            elements[i].classList.add('hide');
+        };
+    }
+
+  </script>
+</body>
+
+</html>

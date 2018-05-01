@@ -1,0 +1,138 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600' rel='stylesheet' type='text/css'>
+
+  <link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+  <style type="text/css">
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: #dddddd;
+      font-weight: 300;
+      margin: 0;
+      padding: 0;
+    }
+
+    .btn,
+    .btn-lg,
+    .input-lg {
+      border-radius: 3px;
+    }
+
+    .form-control {
+      border-radius: 3px;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      border: 0;
+    }
+
+    .input-lg {
+      height: 50px;
+    }
+
+    .btn-lg,
+    .btn-group-lg>.btn {
+      padding: 10px 28px;
+      height: 52px;
+    }
+
+    .btn-success {
+      background-color: rgba(243, 115, 115, 1.0);
+      border: 0;
+      line-height: 1.8;
+    }
+
+    .btn-success:hover,
+    .btn-success:focus,
+    .btn-success:active {
+      background-color: rgba(252, 168, 143, 1.0);
+      color: #fff;
+      border: 0;
+    }
+
+    /* Specific styles */
+
+    .container.landing-page {
+      position: relative;
+      padding: 100px 15px;
+      text-align: center;
+    }
+
+    #result {
+      padding: 20px 15px 50px;
+      background-color: transparent;
+      color: rgba(0, 0, 0, 0.8);
+      font-family: 'Lora', serif;
+      letter-spacing: 0.01rem;
+      font-weight: 400;
+      font-style: normal;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+  </style>
+  <title>PaperVoice</title>
+  <script type="text/javascript">
+    function download(){
+
+      $.ajax(
+            {
+              type : 'GET',
+              url : "/read",
+              data: {'user_url': $('#article_url').val()},
+              success : function(data){
+                console.log(data);
+                // DYNAMICALLY ADD HTML CONTENT TO RENDER BROKEN DOWN PIECES AND THEIR RESPECTIVE AUDIO FILES
+                $( "#article" ).html(data.article);
+                var chunks = data.chunks;
+                var audioList = data.audioList;
+                for (i = 0; i < chunks.length; i++) { 
+                  var chunk = chunks[i];
+                  var audio = audioList[i+1]; // skip the invisible file .DS_store
+                  var template = createContent(chunk, audio);
+                  $('#result').append(template);
+                }
+              }/*success : function() {}*/
+            });/*$.ajax*/
+    }
+    var createContent = function (chunk, audio) {
+      var template = '<div>';
+      template += '<div class = "chunk" style="margin-top:40px">'+chunk+'</div>';
+      template += '<audio controls><source src="static/audio/'+audio+'"></audio></div>';
+      return template;
+    };
+
+  </script>
+</head>
+
+<body>
+  <section class="main">
+    <div class="container landing-page">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <h2 style="margin-bottom: 40px">PaperVoice</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="col-md-12">
+              <input id="article_url" class="form-control input-lg" type="url" name="url_to_clean" placeholder="Paste the URL of an article">
+            </div>
+            <div class="col-md-12">
+              <br />
+              <button type="submit" onclick="return download()" id="download_button" class="btn btn-success btn-lg">Download Audio</button>
+            </div>
+        </div>
+        </div>
+        <div class="col-md-12">
+          <h3 style="margin-bottom: 40px" id="article"></h3>
+        </div>
+        <div id="result"></div>
+      </div>
+  </section>
+
+</body>
+
+</html>
