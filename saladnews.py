@@ -8,7 +8,7 @@ import html
 # Please refer to installation
 # https://pypi.python.org/pypi/newspaper3k/0.2.6
 import newspaper
-
+from multiprocessing.dummy import Pool as ThreadPool
 # Google news API
 from newsapi import NewsApiClient
 
@@ -29,6 +29,60 @@ topic = "gun"
 
 # The source to query
 resources = ["BLOOMBERG", "CNN"]
+
+def get_score_multi(topic, resources):
+    pool = ThreadPool(16)
+
+    pending = []
+    for resource in resources:
+        top_headlines = newsapi.get_everything(q=topic, sources=resource, page=1, language='en')
+        for article in top_headlines['articles']:
+            pending.append([resource, article])
+
+    result = pool.starmap(download, pending)
+    pool.close()
+    pool.join()
+
+    score = []
+    for entry in result:
+        if entry != None:
+            score.append(entry)
+
+    return score
+
+def download(resource, article):
+    article_text = download_article(article['url'])
+    if article['title']!= None and article_text != None:
+        print(article['url'])
+        print(textstat.automated_readability_index(article_text))
+        norm_score = int(textstat.automated_readability_index(article_text)/15*100)
+
+        vote = 0
+        req = requests.get('http://localhost:3000/posts?title=' + article['title'])
+        if len(req.json()) is 0:
+            res = requests.post('http://localhost:3000/posts', data={'title': article['title'], 'vote': 0})
+        else:
+            vote = req.json()[0]['vote']
+
+        if norm_score < 75:
+            easiness = "easy"
+        elif norm_score > 90:
+            easiness = "difficult"
+        else:
+            easiness = "medium"
+
+        if article['urlToImage'] != '':
+            return {'score': norm_score,
+                'resource': resource,
+                'title': article['title'],
+                'url': article['url'],
+                'img': article['urlToImage'],
+                'snippet': article['description'],
+                'easiness':easiness,
+                'vote': vote}
+
+
+
 def get_score(topic, resources):
     score = []
 
@@ -97,7 +151,6 @@ def download_article(url):
         return
     return article.text
 
-# get_score(topic, resources)
 
 
 from flask import Flask, render_template, request, jsonify, redirect, url_for
@@ -110,17 +163,6 @@ app = Flask(__name__)
 def index():
     return render_template('home.html')
 
-# on the article page, update the artiles
-@app.route("/update", methods=['GET'])
-def update():
-    """return to another template page
-    Returns:
-        a template that display the chunks of information and audio files
-    """
-    searchTerm = request.args.get('search')
-    data = get_score(searchTerm, resources)
-    return jsonify(data)
-
 @app.route("/articles", methods=['GET','POST'])
 def articles():
     """API that takes in searching query and returns information on relevant articles
@@ -128,10 +170,17 @@ def articles():
         json object of search topic
     """
     searchTerm = request.args.get('search')
-    data = get_score(searchTerm, resources)
+    resource = request.args.get('resource')
+    print (resource)
+    resources = ["BLOOMBERG", "CNN"]
+    if len(resource) > 0:
+        resources = resource.split(',')
+    print (resources)
+    level = request.args.get('level')
 
-    return render_template('articles.html', data = data)
-    # return jsonify(data)
+    # data = get_score(searchTerm, resources)
+    data = get_score_multi(searchTerm, resources)
+    return render_template('articles.html', data = data, level = level)
 
 # on the home page, when put into search bar
 @app.route("/search", methods=['GET','POST'])
@@ -141,9 +190,10 @@ def search():
         json object of search topic
     """
     searchTerm = request.args.get('search')
-    data = get_score(searchTerm, resources)
-    
-    return jsonify(data)
+    # data = get_score(searchTerm, resources)
+    resources = ["BLOOMBERG", "CNN"]
+    data = get_score_multi(searchTerm, resources)
+    return render_template('articles.html', data = data, level = 0)
     
     # return redirect(url_for('listen', chunks= ch, article = article_title, audioList = audios))
 

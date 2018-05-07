@@ -25,7 +25,7 @@
 <body id="page-top" class="index">
 
 <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-    <a class="navbar-brand" href="/home">
+    <a class="navbar-brand" href="/">
         <img src="../static/resource/salad.png" height ="45px" class="d-inline-block align-top" alt="">
     </a>
     <div style="padding-left: 20px; padding-right: 40px; font-size: 24px;">SaladNews</div>
@@ -42,8 +42,9 @@
 
     <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Sophistication Score
+            Reading Ease
         </a>
+        <div id="readingEase" class="hide">{{ level }}</div>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" href="#" onClick="showEasyOnly()">Easy</a>
             <a class="dropdown-item" href="#" onClick="showMediumOnly()">Medium</a>
@@ -110,10 +111,21 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 <script src="../static/js/bootstrap.js"></script>
 <script type="text/javascript">
+    $(document).ready(function () {
+        console.log('ready');
+        var level = $('#readingEase').text();
+        if (level == 1 || level == 2) {
+            showEasyOnly();
+        } else if (level == 3) {
+            showMediumOnly();
+        } else if (level == 4 || level == 5) {
+            showDifficultOnly();
+        }
+    });
 
     $("input").on("keydown",function search(e) {
         if(e.keyCode == 13) {
-            window.location = '/articles?search='+ ($(this).val());
+            window.location = '/search?search='+ ($(this).val());
         }
     });
 
@@ -121,18 +133,19 @@
         $(caller).css('fill', '#f77878');
     }
     function mouseOut(caller) {
-        $(caller).css('fill', '#f5d3d3');
+        if (!$(caller).hasClass('liked')){
+            $(caller).css('fill', '#f5d3d3');
+        }
     }
     function changeColorVote(caller) {
         console.log(($.trim($(caller).parent().parent().prev().first().text())).length);
-
         if (!$(caller).is( ".liked" )) {
             $(caller).css('fill', '#f77878');
             $(caller).prev().html(parseInt($(caller).prev().text())+1);
             $(caller).addClass('liked');
             var title = $.trim($(caller).parent().parent().prev().first().text());
             $.ajax({
-                    type : 'PUT',
+                    type : 'POST',
                     url : "http://localhost:3000/posts?title="+title,
                     data: {title: title, 'vote': parseInt($(caller).prev().text()) + 1},
                     success : function(data){
@@ -147,7 +160,7 @@
             $(caller).removeClass('liked');
             var title = $.trim($(caller).parent().parent().prev().first().text());
             $.ajax({
-                    type : 'PUT',
+                    type : 'POST',
                     url : "http://localhost:3000/posts?title="+title,
                     data: {title: title, 'vote': parseInt($(caller).prev().text()) - 1},
                     success : function(data){

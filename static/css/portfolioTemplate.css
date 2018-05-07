@@ -152,7 +152,7 @@ h2 {
   margin:0 auto;
   padding-bottom: 80px;
 }
-
+button:focus {outline:0;}
 .row.relatedWork .col-md-4 .cards{
   border: rgb(200,200,200) solid 2px;
   /*border-radius: 10px*/
@@ -181,13 +181,49 @@ h2 {
 .portfolioDeck .card:hover{
   opacity: 0.5;
 }
+.source {
+    display: inline-block;
+    margin: 10px;
 
-
+}
+.levels{
+    width: 40px;
+    display: inline-block;
+    margin:10px;
+}
+.filtered {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+}
+.ingredients {
+    margin: auto;
+    width: 90%;
+    padding: 0 30px 30px 30px;
+}
 .portfolio{
   width:90%;
   margin:auto;
 }
-
+.choices{
+    padding: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.build {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 5px;
+    width: 200px;
+    text-align: center;
+    border: none;
+    background: #3066e0;
+    color: white;
+    font-family: Lato;
+    font-weight: 200;
+}
 .navbar-light .navbar-toggler {
  /*line-height: 60px;*/
  margin-top:15px;
@@ -228,3 +264,105 @@ h2 {
     #columns { column-gap: 0px; }
     #columns figure { width: 100%; }
 }
+
+
+/* ///  DECORATION CSS ///  */
+
+
+
+.icon_select_mate {
+    position: absolute;
+    top:20px;
+    right: 2%;
+    font-size: 16px;
+    height: 22px;
+    transition: all 275ms;
+}
+
+.select_mate {
+    position: relative;
+    float: left;
+    min-width: 300px;
+    width: 300px;
+    min-height: 60px;
+    font-family: 'Roboto';
+    color: #777;
+    font-weight: 300;
+    background-color: #fff;
+    box-shadow: 1px 2px 10px -2px rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    transition: all 375ms ease-in-out;
+}
+/* Oculto el elemento select */
+select {
+    position: absolute;
+    overflow: hidden;
+    height: 0px;
+    opacity: 0;
+    z-index: -1;
+}
+
+.options{
+    font-family: Lato;
+    font-weight: 200;
+}
+.cont_list_select_mate {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+.cont_select_int {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 999;
+    overflow: hidden;
+    height: 0px;
+    width: 100%;
+    background-color: #fff;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    border-radius: 0px 0px 3px 3px;
+    box-shadow: 1px 4px 10px -2px rgba(0, 0, 0, 0.2);
+    transition: all 375ms ease-in-out;
+}
+
+li {
+    position: relative;
+    float: left;
+    width: 100%;
+    border-bottom: 1px solid #E0E0E0;
+    background-color: #abc1f3;
+    list-style-type: none;
+    padding: 10px 2%;
+    margin: 0px;
+    transition: all 275ms ease-in-out;
+    display: block;
+    cursor: pointer;
+}
+li:last-child {
+     border-radius: 3px;
+     border-bottom:0px;
+
+ }
+li:hover {
+     background-color: #85b1f2;
+}
+
+.active {
+    background-color: #85b1f2;
+}
+
+
+
+/* etiqueta <p> con la opcion selecionada  */
+.selecionado_opcion {
+    padding: 20px 2%;
+    width: 100%;
+    display: block;
+    margin: 0px;
+    cursor: pointer;
+}
+
