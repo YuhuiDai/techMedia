@@ -73,7 +73,7 @@ def download(resource, article):
 
         if article['urlToImage'] != '':
             return {'score': norm_score,
-                'resource': resource,
+                'resource': resource.upper().replace("-", " ").replace("THE",""),
                 'title': article['title'],
                 'url': article['url'],
                 'img': article['urlToImage'],
@@ -109,9 +109,10 @@ def get_score(topic, resources):
                 else:
                     easiness = "medium"
 
+
                 if article['urlToImage'] != '':
                     score.append({'score': int(norm_score),
-                     'resource': resource,
+                     'resource': resource.upper().replace("-", " "),
                      'title': article['title'],
                      'url': article['url'],
                      'snippet': article['description'],
