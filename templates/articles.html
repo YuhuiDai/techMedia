@@ -46,9 +46,11 @@
         </a>
         <div id="readingEase" class="hide">{{ level }}</div>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#" onClick="showEasyOnly()">Easy</a>
-            <a class="dropdown-item" href="#" onClick="showMediumOnly()">Medium</a>
-            <a class="dropdown-item" href="#" onClick="showDifficultOnly()">Difficult</a>
+            <a class="dropdown-item" href="#" onClick="showEasyOnly()">1</a>
+            <a class="dropdown-item" href="#" onClick="showEasy_MediumOnly()">2</a>
+            <a class="dropdown-item" href="#" onClick="showMediumOnly()">3</a>
+            <a class="dropdown-item" href="#" onClick="showMedium_DiffOnly()">4</a>
+            <a class="dropdown-item" href="#" onClick="showDifficultOnly()">5</a>
             <a class="dropdown-item" href="#" onClick="showAll()">All</a>
         </div>
     </div>
@@ -173,7 +175,9 @@
     };
 
     var easy = document.getElementsByClassName('easy');
+    var easy_medium = document.getElementsByClassName('easy_medium');
     var medium = document.getElementsByClassName('medium');
+    var medium_diff = document.getElementsByClassName('medium_diff');
     var difficult = document.getElementsByClassName('difficult');
 
     console.log("easy "+easy.length);
@@ -182,23 +186,47 @@
 
     function showAll(){
         show(easy);
+        show(easy_medium);
         show(medium);
+        show(medium_diff);
         show(difficult);
     }
     function showEasyOnly(){
         show(easy);
+        hide(easy_medium);
         hide(medium);
+        hide(medium_diff);
         hide(difficult);
     }
     function showMediumOnly(){
         show(medium);
         hide(easy);
+        hide(easy_medium);
+        hide(medium_diff);
         hide(difficult);
     }
     function showDifficultOnly() {
         show(difficult);
         hide(easy);
+        hide(easy_medium);
+        hide(medium_diff);
         hide(medium);
+    }
+
+    function showEasy_MediumOnly() {
+        show(easy_medium);
+        hide(easy);
+        hide(medium);
+        hide(medium_diff);
+        hide(difficult);
+    }
+
+    function showMedium_DiffOnly() {
+        show(medium_diff);
+        hide(easy);
+        hide(medium);
+        hide(easy_medium);
+        hide(difficult);
     }
     function show(elements){
         console.log("showing "+elements.length);

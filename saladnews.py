@@ -64,15 +64,24 @@ def download(resource, article):
         else:
             vote = req.json()[0]['vote']
 
-        if norm_score < 75:
+        if norm_score < 65:
             easiness = "easy"
-        elif norm_score > 90:
-            easiness = "difficult"
+            s = 1
+        elif norm_score < 75:
+            easiness = "easy_medium"
+            s = 2
+        elif norm_score < 85:
+            easiness = 'medium'
+            s = 3
+        elif norm_score < 95:
+            easiness = "medium_diff"
+            s = 4
         else:
-            easiness = "medium"
+            easiness = "difficult"
+            s = 5
 
         if article['urlToImage'] != '':
-            return {'score': norm_score,
+            return {'score': "X "+str(s),
                 'resource': resource.upper().replace("-", " ").replace("THE",""),
                 'title': article['title'],
                 'url': article['url'],
@@ -80,46 +89,6 @@ def download(resource, article):
                 'snippet': article['description'],
                 'easiness':easiness,
                 'vote': vote}
-
-
-
-def get_score(topic, resources):
-    score = []
-
-    for resource in resources:
-        top_headlines = newsapi.get_everything(q=topic, sources=resource, page=1, language='en')
-        for article in top_headlines['articles']:
-            article_text = download_article(article['url'])
-            if article['title']!= None and article_text != None:
-                print(article['url'])
-                print(textstat.automated_readability_index(article_text))
-                norm_score = textstat.automated_readability_index(article_text)/15*100
-
-                vote = 0
-                req = requests.get('http://localhost:3000/posts?title=' + article['title'])
-                if len(req.json()) is 0:
-                    res = requests.post('http://localhost:3000/posts', data={'title': article['title'], 'vote': 0})
-                else:
-                    vote = req.json()[0]['vote']
-
-                if norm_score < 75:
-                    easiness = "easy"
-                elif norm_score > 90:
-                    easiness = "difficult"
-                else:
-                    easiness = "medium"
-
-
-                if article['urlToImage'] != '':
-                    score.append({'score': int(norm_score),
-                     'resource': resource.upper().replace("-", " "),
-                     'title': article['title'],
-                     'url': article['url'],
-                     'snippet': article['description'],
-                     'img': article['urlToImage'],
-                     'easiness':easiness,
-                     'vote': vote})
-    return score
 
 
 def download_article(url):
