@@ -49,13 +49,36 @@
         <div class="select_mate" data-mate-select="active" >
             <select id="topic" onchange="">
                 <option value="art" class="options">Art</option>
-                <option value="busines" class="options">Business & Finance</option>
+                <option value="business" class="options">Business & Finance</option>
                 <option value="environment" class="options">Environment</option>
                 <option value="entertainment" class="options">Entertainment</option>
                 <option value="health" class="options">Health</option>
                 <option value="politics" class="options">Politics</option>
                 <option value="tech" class="options">Science & Technology</option>
                 <option value="sports" class="options">Sports</option>
+            </select>
+            <p class="selecionado_opcion options"  onclick="open_select(this)" ></p>
+            <span onclick="open_select(this)" class="icon_select_mate" >
+            <svg fill="#000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.41 7.84L12 12.42l4.59-4.58L18 9.25l-6 6-6-6z"/>
+                <path d="M0-.75h24v24H0z" fill="none"/>
+            </svg>
+        </span>
+            <div class="cont_list_select_mate">
+                <ul class="cont_select_int options">  </ul>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+    </div>
+    <div class="ingredients">
+        <div class="col-md-4 choices">Choose Your Date Range: </div>
+        <div class="select_mate" data-mate-select="active" >
+            <select id="date" onchange="">
+                <option value="3" class="options">Last 3 days</option>
+                <option value="7" class="options">Last 7 days</option>
+                <option value="30" class="options">Last 30 days</option>
             </select>
             <p class="selecionado_opcion options"  onclick="open_select(this)" ></p>
             <span onclick="open_select(this)" class="icon_select_mate" >
@@ -143,6 +166,9 @@
     function sendData() {
         // get topic
         var topic = $("#topic").val();
+        // get date
+        var date = $("#date").val();
+
         // get news sources
         var resource = "";
         var n = $(".checkboxClass:checked").length;
@@ -154,7 +180,7 @@
             });
         }
         resource = resource.substring(0, resource.length-1);
-        console.log(resource);
+        console.log(date);
         // get easiness level
         var level = 0;
         for (var i=1; i<= 5; i++) {
@@ -163,7 +189,7 @@
             }
         }
 
-        window.location = '/articles?search='+ topic+"&resource=" +resource+"&level="+level;
+        window.location = '/articles?search='+ topic+"&resource=" +resource+"&level="+level+"&date="+date;
 
     }
 

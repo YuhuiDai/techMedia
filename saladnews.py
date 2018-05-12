@@ -3,6 +3,7 @@ import re
 import requests
 import chardet
 import html
+import datetime
 
 # NLP based article extractor
 # Please refer to installation
@@ -30,12 +31,23 @@ topic = "gun"
 # The source to query
 resources = ["BLOOMBERG", "CNN"]
 
-def get_score_multi(topic, resources):
-    pool = ThreadPool(16)
+def get_score_multi(topic, resources, date='30'):
+    pool = ThreadPool(4)
+
+    date_end = datetime.date.today()
+    date_start = ''
+    if date == '30':
+        date_start  = date_end + datetime.timedelta(days = -30)
+    elif date == '7':
+        date_start  = date_end + datetime.timedelta(days = -7)
+    elif date == '3':
+        date_start  = date_end + datetime.timedelta(days = -3)
 
     pending = []
     for resource in resources:
-        top_headlines = newsapi.get_everything(q=topic, sources=resource, page=1, language='en')
+        print(str(date_start))
+        top_headlines = newsapi.get_everything(q=topic, sources=resource, page=1, language='en', sort_by='publishedAt', from_param=str(date_start), to=str(date_end))
+
         for article in top_headlines['articles']:
             pending.append([resource, article])
 
@@ -79,7 +91,7 @@ def download(resource, article):
         else:
             easiness = "difficult"
             s = 5
-
+        date = article['publishedAt'].split('T')[0].replace(" ","")
         if article['urlToImage'] != '':
             return {'score': "X "+str(s),
                 'resource': resource.upper().replace("-", " ").replace("THE",""),
@@ -88,6 +100,7 @@ def download(resource, article):
                 'img': article['urlToImage'],
                 'snippet': article['description'],
                 'easiness':easiness,
+                'date':date,
                 'vote': vote}
 
 
@@ -147,9 +160,9 @@ def articles():
         resources = resource.split(',')
     print (resources)
     level = request.args.get('level')
-
+    date = request.args.get('date')
     # data = get_score(searchTerm, resources)
-    data = get_score_multi(searchTerm, resources)
+    data = get_score_multi(searchTerm, resources, date)
     return render_template('articles.html', data = data, level = level)
 
 # on the home page, when put into search bar
@@ -162,7 +175,7 @@ def search():
     searchTerm = request.args.get('search')
     # data = get_score(searchTerm, resources)
     resources = ["BLOOMBERG", "CNN"]
-    data = get_score_multi(searchTerm, resources)
+    data = get_score_multi(searchTerm, resources, '30')
     return render_template('articles.html', data = data, level = 0)
     
     # return redirect(url_for('listen', chunks= ch, article = article_title, audioList = audios))
